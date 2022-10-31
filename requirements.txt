@@ -1,0 +1,7 @@
+black
+python-dotenv==0.20.0
+dask[complete]
+numpy==1.23.4
+pandas==1.5.1
+SQLAlchemy==1.4.42
+psycopg2-binary==2.9.5

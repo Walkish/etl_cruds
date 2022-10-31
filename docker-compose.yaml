@@ -1,0 +1,27 @@
+version: "3"
+services:
+
+  postgres:
+    image: postgres:latest
+    container_name: dask_pg
+    ports:
+      - 5433:5432 # postgres is set up on 5432 but exposed on 5433
+    restart: always
+
+    environment:
+      POSTGRES_USER: postgres_user
+      POSTGRES_PASSWORD: postgres_password
+      POSTGRES_DB: postgres_db
+
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+
+    volumes:
+#      - ./create_tables.sql:/docker-entrypoint-initdb.d/create_tables.sql
+      - db-data:/var/lib/postgresql/data
+
+volumes:
+  db-data:
+    driver: local
