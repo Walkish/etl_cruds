@@ -8,14 +8,12 @@ import dask.dataframe as dd
 import logging
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(filename="log.txt", format="%(asctime)s - %(message)s", datefmt="%d-%b-%y %H:%M:%S")
-
-path = Path(__file__).parent / "data"
-
-uri = DBConnector(**secrets).get_conn_string("postgresql")
+logging.basicConfig(
+    filename="log.txt", format="%(asctime)s - %(message)s", datefmt="%d-%b-%y %H:%M:%S"
+)
 
 
-def read_csv(path: str, dataset: str) -> DataFrame:
+def read_csv(path: Path, dataset: str) -> DataFrame:
     return dd.read_csv(
         f"{path}/{dataset}/*.gz",
         blocksize="128MB",
@@ -23,13 +21,19 @@ def read_csv(path: str, dataset: str) -> DataFrame:
     )
 
 
-def to_sql(ddf: DataFrame, tablename: str):
+def to_sql(ddf: DataFrame, tablename: str, uri: str):
     start = datetime.now()
-    ddf.to_sql(name=tablename, uri=uri, if_exists="replace", index=False)
+    ddf.to_sql(
+        name=tablename, uri=uri, if_exists="replace", index=False, chunksize=50000
+    )
     total_duration = datetime.now() - start
-    logger.info(f"Dask job is finished. Total time: {total_duration.seconds} seconds")
+    logger.warning(
+        f"Dask job is finished. Total time: {total_duration.seconds} seconds"
+    )
 
 
 if __name__ == "__main__":
-    to_sql(read_csv(path, dataset="profiles"), "profiles")
-    # to_sql(read_csv(path, dataset="activity"), "activity")
+    path = Path(__file__).parent / "data"
+    uri = DBConnector(**secrets).get_conn_string("postgresql")
+
+    to_sql(read_csv(path=path, dataset="profiles"), "profiles", uri=uri)

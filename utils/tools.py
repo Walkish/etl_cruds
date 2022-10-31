@@ -1,8 +1,9 @@
 from os.path import isfile, join, splitext
 from os import listdir
+from pathlib import Path
 
 
-def list_all_files_in_dir(src_folder_path: str, extension: str = None):
+def list_all_files_in_dir(src_folder_path: Path, extension: str = None):
     """
     :param src_folder_path: "/src"
     :param extension:  ".gz" , ".txt"

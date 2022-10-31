@@ -23,6 +23,14 @@
 
 `sudo kill <pid>`
 
-###In case you see this error: _PostgreSQL Database directory appears to contain a database; Skipping initialization_ , run this:
+**In case you see this error:** 
+
+_PostgreSQL Database directory appears to contain a database; Skipping initialization_ , run this:_
 
 `docker-compose down --volumes`
+
+
+**Inserting data into database Insert Performance Benchmark:**
+
+https://naysan.ca/2020/05/09/pandas-to-postgresql-using-psycopg2-bulk-insert-performance-benchmark/
+https://innerjoin.bit.io/populating-a-postgresql-table-with-pandas-is-slow-7bc63e9c88dc
