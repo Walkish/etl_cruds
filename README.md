@@ -1,6 +1,6 @@
-#Dask crud
+#Etl cruds
 
-#Setup
+###Postgres setup
 
 **cached build:**
 
@@ -25,7 +25,9 @@
 
 **In case you see this error:** 
 
-_PostgreSQL Database directory appears to contain a database; Skipping initialization_ , run this:_
+_PostgreSQL Database directory appears to contain a database; Skipping initialization_
+
+**run this:**
 
 `docker-compose down --volumes`
 
