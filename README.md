@@ -1,4 +1,4 @@
-#Etl cruds
+# Etl cruds
 
 ###Postgres setup
 
@@ -13,7 +13,7 @@
 
 
 
-###In case all the posrgres ports are busy run this: 
+### In case all the posrgres ports are busy run this: 
 
 **show all occupied ports:**
 
