@@ -1,18 +1,11 @@
 import pandas as pd
 from pandas import DataFrame
 from utils.tools import list_all_files_in_dir
-from typing import List, Tuple
-from utils.config import configuration
-from utils.database_connector import DBConnector
-from utils.secrets import secrets
+from typing import List
+from utils.config import profiles_conf
+from controllers.postgres_contoller import PostgresController
+from utils.secrets import postgres_secrets
 from pathlib import Path
-from datetime import datetime
-import logging
-
-logger = logging.getLogger(__name__)
-logging.basicConfig(
-    filename="log.txt", format="%(asctime)s - %(message)s", datefmt="%d-%b-%y %H:%M:%S"
-)
 
 
 def read_csv(src_folder_path: Path, files: List[str], headers) -> DataFrame:
@@ -24,17 +17,13 @@ def read_csv(src_folder_path: Path, files: List[str], headers) -> DataFrame:
     return pd.concat(temp_dfs)
 
 
-def to_sql(df: DataFrame, client: DBConnector, dataset: str):
-    start = datetime.now()
+def to_sql(df: DataFrame, client: PostgresController, dataset: str, table_schema: str = "public"):
     columns, rows = split_to_rows_columns(df)
-    client.insert(
+    client.insert_execute_values(
         columns=columns,
         rows=rows,
         table_name=dataset,
-    )
-    total_duration = datetime.now() - start
-    logger.warning(
-        f"Pandas job is finished. Total time: {total_duration.seconds} seconds"
+        table_schema=table_schema
     )
 
 
@@ -43,17 +32,16 @@ def split_to_rows_columns(df: pd.DataFrame):
 
 
 if __name__ == "__main__":
-    conn = DBConnector(**secrets)
+    conn = PostgresController(**postgres_secrets)
     dataset_name = "profiles"
     root_folder = Path(__file__).parent / "data"
     dataset_folder = root_folder / dataset_name
     files = list_all_files_in_dir(dataset_folder, ".gz")
-
     to_sql(
         read_csv(
             src_folder_path=dataset_folder,
             files=files,
-            headers=configuration["headers"][dataset_name],
+            headers=profiles_conf["headers"],
         ),
         client=conn,
         dataset=dataset_name,

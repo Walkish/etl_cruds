@@ -1,6 +1,6 @@
-from utils.config import configuration
-from utils.database_connector import DBConnector
-from utils.secrets import secrets
+from utils.config import profiles_conf
+from controllers.postgres_contoller import PostgresController
+from utils.secrets import postgres_secrets
 from pathlib import Path
 from dask.dataframe import DataFrame
 from datetime import datetime
@@ -17,7 +17,7 @@ def read_csv(path: Path, dataset: str) -> DataFrame:
     return dd.read_csv(
         f"{path}/{dataset}/*.gz",
         blocksize="128MB",
-        names=configuration["headers"][dataset],
+        names=profiles_conf["headers"],
     )
 
 
@@ -34,6 +34,6 @@ def to_sql(ddf: DataFrame, tablename: str, uri: str):
 
 if __name__ == "__main__":
     path = Path(__file__).parent / "data"
-    uri = DBConnector(**secrets).get_conn_string("postgresql")
 
+    uri = PostgresController(**postgres_secrets)._get_conn_string()
     to_sql(read_csv(path=path, dataset="profiles"), "profiles", uri=uri)
